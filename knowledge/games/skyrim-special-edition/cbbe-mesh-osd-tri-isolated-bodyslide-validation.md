@@ -1,7 +1,7 @@
 ---
 kind: game
 title: "CBBE OSD/TRI validation, isolated BodySlide builds, and a tested morph/physics baseline"
-game: "The Elder Scrolls V: Skyrim Special Edition"
+game: "Skyrim Special Edition"
 games_also: []
 game_version: "Runtime test: 1.6.1170.0 with SKSE 2.2.6; separate inspected Steam executable metadata: 1.7.104.0"
 platform: windows
@@ -10,7 +10,7 @@ route: asset-only
 tools: ["BodySlide/Outfit Studio 5.8.1.0", "MO2 2.5.2", "Node.js readers", "RaceMenu AE 0.4.20.0", "CBPC 1.6.2", "local CBBE directory labelled 2.0.3", "local XPMSSE directory labelled 5.06"]
 anti_cheat: "Single-player research profiles only; no online client, anti-cheat bypass, DRM removal or ownership-check change involved"
 status: working
-agents: ["OpenCode (GPT-6.1 Sol)", "OpenCode (GPT-6.1 Sol Fast; contribution editing)", "OpenCode (GPT-6 Astra Fast; contribution re-audit)"]
+agents: ["OpenCode (GPT-6.1 Sol)", "OpenCode (GPT-6.1 Sol Fast)", "OpenCode (GPT-6 Astra Fast)"]
 humans: ["Kokuru"]
 date: 2026-10-28
 links:
@@ -150,6 +150,10 @@ version-independence flags. The [SKSE plugin contract](https://github.com/ianpat
 explains why that particular binary is not compatible with the separately inspected
 1.7.104 executable. An Address Library installation does not override that declared
 version contract. Use a supported combination; do not patch the compatibility check.
+On 1.7.x there is a second check: the Address Library encoding changed in 1.7.99, and
+SKSE 2.3.1 (the build for 1.7.104) disables an Address Library plugin built before
+2025-05-26 without the `kVersionIndependentEx_AddressLibraryV5` flag ("must be
+recompiled for new address library", [`PluginManager.cpp`](https://github.com/ianpatt/skse64/blob/25b72352adb6543fa6d0bd3795780672b2e238e0/skse64/PluginManager.cpp)).
 
 The ordinary inspected CBBE body referenced **26 bones**; its Physics counterpart
 referenced **30**, adding positively weighted breast/butt nodes. Matching physics
@@ -244,10 +248,14 @@ and captured menus are deliberately not attached to this contribution.
 ## Assets
 
 No game meshes, extracted textures, presets, morph datasets, generated NIF/TRI,
-third-party binaries, decompiled code or private dumps accompany this note.
-BodySlide/Outfit Studio and nifly are credited as the public implementation
-references; their licenses remain their own. CBBE, XPMSSE, RaceMenu, CBPC, 3BA and
-FSMP are separate dependencies, not material relicensed by this contribution.
+third-party binaries, decompiled code or private dumps accompany this note. The
+BodySlide outputs are built from CBBE's project data, and the vanilla body was read
+from the game's own files, so both stay in the user's own install.
+BodySlide/Outfit Studio (Ousnius and Caliente) and nifly (ousnius) are credited as
+the public implementation references; their licenses remain their own. CBBE
+(Ousnius and Caliente), XPMSSE (Groovtama), RaceMenu (expired6978), CBPC (Shizof),
+CBBE 3BA (Acro748) and Faster HDT-SMP (DaymareOn) are separate dependencies with
+their own permissions, not material relicensed by this contribution.
 
 ## Open questions
 

@@ -1,7 +1,7 @@
 ---
 kind: game
 title: "Bloodlines MDL2531 outfit transfer and native secondary motion: bind frames, pose provenance and receiver flags"
-game: "Vampire - The Masquerade: Bloodlines"
+game: "Vampire: The Masquerade - Bloodlines"
 games_also: ["The Elder Scrolls V: Skyrim Special Edition"]
 game_version: "Local Version.inf 1.2; enabled Unofficial Patch Plus metadata 11.5.46.0; Fashionista portable MO2 profile"
 platform: windows
@@ -10,7 +10,7 @@ route: native-hook
 tools: ["Blender 4.5.15 LTS", "BodySlide/Outfit Studio 5.8.1", "SourceIO MDL2531/VTX107 readers", "MO2 2.5.2", "Zig 0.13.0 (x86)", "Bullet 3.25", "Python/NumPy", "srctools"]
 anti_cheat: "Single-player Bloodlines instance; no anti-cheat signature found in bounded local scan, no multiplayer interaction or protection/ownership bypass"
 status: in-progress
-agents: ["OpenCode (GPT-6.1 Sol)", "OpenCode (GPT-6.1 Sol Fast)", "OpenCode (GPT-6 Astra)", "OpenCode (GPT-6 Astra Fast; contribution re-audit)"]
+agents: ["OpenCode (GPT-6.1 Sol)", "OpenCode (GPT-6.1 Sol Fast)", "OpenCode (GPT-6 Astra)", "OpenCode (GPT-6 Astra Fast)"]
 humans: ["Kokuru"]
 date: 2026-10-28
 links:
@@ -29,8 +29,8 @@ tags: [mdl2531, vtx107, source, body-proportions, conversion-carrier, animation,
 
 > A private asset-conversion and x86 runtime prototype transferred supplied
 > CBBE/3BA proportions onto an existing LongHair outfit, then added solver-backed
-> secondary motion. The human accepted bounce, smoothness and absence of visible
-> distortion in the sampled motion review. The project remains in progress:
+> secondary motion. The human accepted the motion, its smoothness and the absence of
+> visible distortion in the sampled motion review. The project remains in progress:
 > contacts, broad animation/control coverage and an independent-outfit test are
 > not complete, and this note is not a distributable mod or turnkey converter.
 
@@ -42,8 +42,8 @@ model, its initialized cache and its actual animated baseline.
 ## Setup
 
 - Windows, **Bloodlines (2004), x86**. Local `Version.inf` reported **1.2**;
-  enabled Unofficial Patch Plus metadata reported **11.5.46.0**. These are the
-  recorded local identifiers, not a claim to identify every DLL by that label.
+  enabled Unofficial Patch Plus (Wesp5) metadata reported **11.5.46.0**. These are
+  the recorded local identifiers, not a claim to identify every DLL by that label.
 - Existing **Fashionista portable MO2 2.5.2** installation and engine fixes were
   retained. The configured launch used `Vampire.exe -game Unofficial_Patch -window`.
 - The supplied **LongHair** female Toreador outfit had armor0-3 variants. Its local
@@ -53,6 +53,13 @@ model, its initialized cache and its actual animated baseline.
   Outfit Studio 5.8.1**. The full authoring reference and preset were supplied
   separately. Permission to use them for this private experiment is not permission
   to redistribute them.
+- **What stays private:** everything from the Skyrim side (the CBBE/3BA reference,
+  the preset, BodySlide's morph data and the shapes derived from them) comes from
+  the user's own installs, and the converted LongHair models stay in the private
+  build. CBBE (Ousnius and Caliente), CBBE 3BA (Acro748) and BodySlide are community
+  projects with their own permissions, and so is the LongHair outfit: a converted
+  outfit can only be published with their authors' permission and credit, and
+  nothing from Skyrim's own files ships.
 - **Blender 4.5.15 LTS**, build `5afeabba6097`; **Zig 0.13.0**, x86 target;
   **Bullet 3.25**, commit `2c204c49e56ed15ec5fcfa71d199ab6d6570b3f5`.
 - **SourceIO** readers pinned to `fe24260b97ac03b899d9b5d4f0fd7b34772f3647`;
@@ -144,7 +151,9 @@ The native export/reopen, ordinary hierarchy audit, solver fixtures, initialized
 model admission and plugin telemetry all passed, but the game showed severe
 chest/neckline stretching even before solver displacement.
 
-For these 160-byte native bone records, the uint32 flags field is at **`+0x88`**.
+For these 160-byte native bone records, the uint32 flags field is at **`+0x88`**
+(the MDL 2531 bone layout SourceIO's reader uses: no Euler rotation or alignment
+quaternion, so the flags follow the pose-to-bone matrix directly).
 In the inspected native consumer, **flag mask `0x2`** selected **actor/root-relative
 rotation** while translation still followed the parent. Clearing that bit selected
 full parent-relative composition. Copying torso flags `0xfffe` onto identity-local
@@ -265,7 +274,7 @@ to read this note, but the custom runtime is **not supplied** for installation.
 | Corrected production fixtures | 720 comparison phases, including captured-animation/repeated-pass cases | Complete authored-animation or contact coverage |
 | Corrected live baseline | 40 stable phases, all 162 added matrices equal the torso bit-exact: 6,480 comparisons | Every animation and runtime state |
 | Live composition/guard | Independent reconstruction exact; maximum sampled cumulative bound 0.94992349 against a strict 0.95 margin | Global self-collision, swept collision or garment contact |
-| Corrected human test | Human accepted bounce, smoothness and no visible distortion after the motion-review request | Exhaustive motion/contact or extreme-pose appearance acceptance |
+| Corrected human test | Human accepted the motion, smoothness and no visible distortion after the motion-review request | Exhaustive motion/contact or extreme-pose appearance acceptance |
 
 The deformation guard bounded the displacement gradient on the declared affected
 triangle set relative to true animation. It did not certify a previously malformed
@@ -316,17 +325,19 @@ need their own evidence before generalizing.
    fixed-tick world-pose holding against current animation. Fix: equilibrium-local
    interpolation/current-animation reapplication, with the latency stated explicitly.
 9. **Symptom: one solver's settings are treated as another's softness preset.**
-   Cause: conflating the inspected D-cup Full SMP comparator with CBPC Very
-   Softness/D-D, or authored endpoints with live maxima. Fix: pin the actual source
+   Cause: conflating the inspected Full SMP comparator profile with a CBPC softness
+   preset, or authored endpoints with live maxima. Fix: pin the actual source
    profile and distinguish constraint settings, static endpoints and observed motion.
 
 ## Assets
 
 This text-only contribution contains no game/mod assets, private preset, derived
-mesh, texture, screenshot, simulator XML, DLL, disassembly or memory dump. SourceIO,
-BodySlide/Outfit Studio, FSMP and Bullet retain their licenses; source-derived
-adapters need their own license/provenance review before any release. Referencing
-public source here does not relicense its implementation as original project code.
+mesh, texture, screenshot, simulator XML, DLL, disassembly or memory dump. SourceIO
+(REDxEYE), Crowbar (ZeqMacaw), srctools (TeamSpen210), vtmb-tweaks (c6-dev),
+BodySlide/Outfit Studio (Ousnius and Caliente), FSMP (DaymareOn) and Bullet retain
+their licenses; source-derived adapters need their own license/provenance review
+before any release. Referencing public source here does not relicense its
+implementation as original project code.
 
 The supplied LongHair release identity remains unknown; crediting the filename is
 not a substitute for resolving its author and redistribution terms before shipping
